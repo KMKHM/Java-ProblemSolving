@@ -1,4 +1,4 @@
-package LeetCode;
+package leetcode;
 
 class LeetCode3024 {
     public String triangleType(int[] nums) {
