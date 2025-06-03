@@ -3,7 +3,7 @@ package baekjoon.gold.graph;
 import java.util.*;
 import java.io.*;
 
-public class Main {
+public class BOJ_1238 {
 
     static int N;
     static int M;
