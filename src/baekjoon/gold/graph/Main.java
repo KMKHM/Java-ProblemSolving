@@ -1,54 +1,63 @@
 package baekjoon.gold.graph;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
     static int N, M;
-    static StringTokenizer st;
-    static int[] parent, arr;
-
-    static int find(int x) {
-        if (parent[x] == x) {
-            return x;
-        }
-        return find(parent[x]);
-    }
-
-    static void union(int a, int b) {
-        int aP = find(a);
-        int bP = find(b);
-        parent[Math.max(aP, bP)] = Math.min(aP, bP);
-    }
-
-
+    static int[][] arr;
+    static int[] dx = {1, -1, 0, 0};
+    static int[] dy = {0, 0, 1, -1};
+    static int res = Integer.MAX_VALUE;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        st = new StringTokenizer(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
+        arr = new int[N][N];
 
-        st = new StringTokenizer(br.readLine());
-        parent = new int[N+1];
-        arr = new int[N+1];
-
-
-        for (int i=1; i<N+1; i++) {
-            int num = Integer.parseInt(st.nextToken());
-
-            union(i, num);
-            parent[i] = find(num);
+        for (int i=0; i<N; i++) {
+            String s = br.readLine();
+            for (int j=0; j<M; j++) {
+                arr[i][j] = s.charAt(j) - '0';
+            }
         }
 
-        for (int i=0; i<M; i++) {
-            st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-            arr[a]+=b;
-        }
+        bfs(0, 0);
+        System.out.println(res == Integer.MAX_VALUE ? -1 : res);
     }
 
+    static void bfs(int x, int y) {
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{x, y, 1, 1});
+        boolean[][] visited = new boolean[N][M];
+        visited[x][y] = true;
+
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int curX = cur[0];
+            int curY = cur[1];
+            int curCnt = cur[2];
+            int curRes = cur[3];
+
+            if (curX==N-1 && curY==M-1) {
+                res=Math.min(res, curRes);
+            }
+
+            for (int i=0; i<4; i++) {
+                int nx = curX + dx[i];
+                int ny = curY + dy[i];
+                if (nx >= 0 && nx < N && ny >= 0 && ny < M && !visited[nx][ny]) {
+                    if (arr[nx][ny] == 0) {
+                        visited[nx][ny] = true;
+                        q.offer(new int[]{nx, ny, curCnt, curRes+1});
+                    } else if (arr[nx][ny] == 1 && curCnt == 1) {
+                        visited[nx][ny] = true;
+                        q.offer(new int[]{nx, ny, 0, curRes+1});
+                    }
+                }
+            }
+        }
+    }
 }
